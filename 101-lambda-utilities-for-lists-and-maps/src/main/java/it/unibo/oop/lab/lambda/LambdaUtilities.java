@@ -83,19 +83,22 @@ public final class LambdaUtilities {
      * @return a map that groups into categories each element of the input list,
      *         based on the mapping done by the function
      */
+
+    // CHECKSTYLE: IllegalType OFF
     public static <R, T> Map<R, Set<T>> group(final List<T> list, final Function<T, R> op) {
         /*
          * Suggestion: consider Map.merge
          */
         final Map<R, Set<T>> toReturn = new HashMap<>();
         list.forEach(e -> toReturn.merge(op.apply(e), Set.of(e), (oldSet, newSet) -> {
-            final HashSet<T> mySet = new HashSet<>();
+            final HashSet<T> mySet = new HashSet<>(); //NOPMD
             mySet.addAll(oldSet);
             mySet.addAll(newSet);
             return mySet;
-        } ));
+        }));
         return toReturn;
     }
+    // CHECKSTYLE: IllegalType ON
 
     /**
      * @param map
@@ -117,7 +120,7 @@ public final class LambdaUtilities {
          */
         final Map<K, V> toReturn = new HashMap<>();
         map.entrySet().forEach(e -> {
-            V val = e.getValue().isEmpty() ? def.get() : e.getValue().get();
+            final V val = e.getValue().isEmpty() ? def.get() : e.getValue().get();
             toReturn.put(e.getKey(), val);
         });
         return toReturn;
