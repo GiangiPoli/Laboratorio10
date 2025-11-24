@@ -13,7 +13,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static java.util.Collections.emptyList;
+//import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 
 /**
@@ -64,7 +64,10 @@ public final class LambdaUtilities {
         /*
          * Suggestion: consider Optional.filter
          */
-        return emptyList();
+
+        final List<Optional<T>> toReturn = new ArrayList<>();
+        list.forEach(o -> toReturn.add(Optional.of(o).filter(pre)));
+        return toReturn;
     }
 
     /**
@@ -83,6 +86,8 @@ public final class LambdaUtilities {
         /*
          * Suggestion: consider Map.merge
          */
+        final Map<R, Set<T>> toReturn = new HashMap<>();
+        list.forEach(e -> toReturn.merge());
         return emptyMap();
     }
 
