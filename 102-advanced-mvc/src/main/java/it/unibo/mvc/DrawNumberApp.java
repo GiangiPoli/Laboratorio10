@@ -1,16 +1,20 @@
 package it.unibo.mvc;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  */
 public final class DrawNumberApp implements DrawNumberViewObserver {
-    private static final int MIN = 0;
-    private static final int MAX = 100;
-    private static final int ATTEMPTS = 10;
 
+    private final List<Integer> configList = new ArrayList<>();
     private final DrawNumber model;
     private final List<DrawNumberView> views;
 
@@ -27,7 +31,19 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
             view.setObserver(this);
             view.start();
         }
-        this.model = new DrawNumberImpl(MIN, MAX, ATTEMPTS);
+
+        try(final InputStream in = getClass().getClassLoader().getResourceAsStream("config.yml")) {
+            if (in != null) {
+                final BufferedReader bRead = new BufferedReader(new InputStreamReader(in));
+                String line;
+                while ((line = bRead.readLine()) != null) {
+                    configList.add(Integer.parseInt(line.split(":\\s")[1]));
+                }  
+            }
+        } catch(IOException e) {
+            System.out.println(e.getMessage()); //NOPMD
+        }
+        this.model = new DrawNumberImpl(configList.get(0), configList.get(1), configList.get(2));
     }
 
     @Override
@@ -66,7 +82,10 @@ public final class DrawNumberApp implements DrawNumberViewObserver {
      * @throws FileNotFoundException 
      */
     public static void main(final String... args) throws FileNotFoundException {
-        new DrawNumberApp(new DrawNumberViewImpl());
+        final String myPath = System.getProperty("user.home")
+        + File.separator
+        + "es102.txt";
+        new DrawNumberApp(new DrawNumberViewImpl(), new DrawNumberViewImpl(), new PrintStreamView(System.out), new PrintStreamView(myPath));
     }
 
 }
